@@ -7,6 +7,8 @@ npm install
 npm run dev
 ```
 
+DEMO : https://kikocomurray.github.io/fruition/
+
 ## 兩種法器
 
 **木魚**：供在蒲團上，旁邊躺著一支槌。可以自由連敲，要多快有多快。
