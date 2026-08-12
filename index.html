@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0E0D0C" />
+    <title>木魚</title>
+  </head>
+  <body>
+    <main class="stage">
+      <div class="tally">
+        <output class="tally__count" id="count" aria-live="off">0</output>
+        <p class="tally__label">功德</p>
+      </div>
+
+      <div class="scene">
+        <!-- 木魚：主角，可以自由連敲 -->
+        <div class="strike" id="strike">
+          <button class="muyu" id="muyu" type="button" aria-label="敲木魚">
+            <svg class="muyu__art" viewBox="0 0 200 200" aria-hidden="true">
+              <defs>
+                <radialGradient id="lacquer" cx="30%" cy="18%" r="88%">
+                  <stop offset="0%" stop-color="#8A5730" />
+                  <stop offset="46%" stop-color="#53301A" />
+                  <stop offset="100%" stop-color="#1D1108" />
+                </radialGradient>
+                <linearGradient id="cushion" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#7C2F23" />
+                  <stop offset="100%" stop-color="#43150F" />
+                </linearGradient>
+                <linearGradient id="throat" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#070302" />
+                  <stop offset="100%" stop-color="#1A0F06" />
+                </linearGradient>
+                <linearGradient id="stick" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#A8783F" />
+                  <stop offset="100%" stop-color="#5E3D1B" />
+                </linearGradient>
+                <radialGradient id="mallet" cx="34%" cy="28%" r="78%">
+                  <stop offset="0%" stop-color="#B4854A" />
+                  <stop offset="100%" stop-color="#5A3818" />
+                </radialGradient>
+              </defs>
+
+              <!-- 蒲團：把它錨定成供在座上的法器 -->
+              <ellipse cx="100" cy="146" rx="80" ry="21" fill="#2C0D0A" />
+              <ellipse cx="100" cy="140" rx="80" ry="21" fill="url(#cushion)" />
+              <path
+                d="M28 134c19-9 42-13 72-13s53 4 72 13"
+                fill="none"
+                stroke="#95412F"
+                stroke-width="2"
+                opacity=".5"
+              />
+
+              <!-- 魚身：3/4 俯視，坐進蒲團裡 -->
+              <g transform="rotate(-7 98 92)">
+                <ellipse cx="98" cy="92" rx="70" ry="50" fill="url(#lacquer)" />
+
+                <!-- 頂面 -->
+                <ellipse
+                  cx="92"
+                  cy="78"
+                  rx="54"
+                  ry="31"
+                  fill="#7A4823"
+                  opacity=".32"
+                />
+
+                <!-- 上緣的漆光 -->
+                <path
+                  d="M48 62c13-13 31-21 49-23-20 6-36 14-45 26Z"
+                  fill="#EBCDA3"
+                  opacity=".34"
+                />
+
+                <!-- 頂上的盤紋 -->
+                <g
+                  fill="none"
+                  stroke="#28170A"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  opacity=".55"
+                >
+                  <path
+                    d="M92 82c-9 1-16-5-16-13s7-14 15-13c7 1 12 7 11 13-1 5-6 8-10 7"
+                  />
+                  <path d="M130 66c5 4 8 9 9 15" opacity=".75" />
+                  <path d="M139 62c6 5 9 11 10 18" opacity=".5" />
+                </g>
+
+                <!-- 開口：短、偏右、細 -->
+                <path
+                  d="M46 108c26 12 62 13 96 4l2 7c-36 10-76 8-102-5Z"
+                  fill="url(#throat)"
+                />
+                <path
+                  d="M47 110c26 11 60 12 94 3"
+                  fill="none"
+                  stroke="#050202"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M50 118c25 10 58 11 92 3"
+                  fill="none"
+                  stroke="#9A6837"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  opacity=".38"
+                />
+              </g>
+
+              <!-- 木魚槌：一支槌子躺在前面，這東西就不可能是生物了 -->
+              <g transform="rotate(-5 100 172)">
+                <rect
+                  x="74"
+                  y="168"
+                  width="94"
+                  height="7"
+                  rx="3.5"
+                  fill="url(#stick)"
+                />
+                <ellipse cx="66" cy="172" rx="18" ry="15" fill="url(#mallet)" />
+                <ellipse
+                  cx="60"
+                  cy="167"
+                  rx="8"
+                  ry="6"
+                  fill="#C79358"
+                  opacity=".35"
+                />
+              </g>
+            </svg>
+          </button>
+        </div>
+
+        <!-- 念珠：撥一顆算一顆，108 顆剛好一圈 -->
+        <div class="beads" id="beads" hidden>
+          <button class="mala" id="mala" type="button" aria-label="撥念珠">
+            <svg class="mala__art" viewBox="0 0 200 130" aria-hidden="true">
+              <defs>
+                <radialGradient id="bead" cx="34%" cy="30%" r="72%">
+                  <stop offset="0%" stop-color="#8E5C30" />
+                  <stop offset="100%" stop-color="#3A2210" />
+                </radialGradient>
+                <radialGradient id="guru" cx="34%" cy="30%" r="72%">
+                  <stop offset="0%" stop-color="#D8A85E" />
+                  <stop offset="100%" stop-color="#6E4415" />
+                </radialGradient>
+                <radialGradient id="focus">
+                  <stop offset="0%" stop-color="#D8B26A" stop-opacity=".22" />
+                  <stop offset="100%" stop-color="#D8B26A" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+
+              <!-- 串繩 -->
+              <circle
+                cx="100"
+                cy="250"
+                r="175"
+                fill="none"
+                stroke="#241608"
+                stroke-width="1.6"
+              />
+
+              <!-- 正在數的那一顆固定停在弧頂 -->
+              <circle cx="100" cy="75" r="16" fill="url(#focus)" />
+
+              <!-- 手：從右下角進畫面，被兩條邊切掉，不會形成封閉的團塊。
+                   食指畫在珠子之前、拇指畫在珠子之後——珠串被前後夾住，
+                   「握著」就是這樣讀出來的。 -->
+              <path
+                d="M200 130V84c-21 6-38 18-48 31-4 5-6 11-7 15Z"
+                fill="#9E7048"
+              />
+              <path
+                d="M190 130c-22-2-44-8-60-16"
+                fill="none"
+                stroke="#8E6540"
+                stroke-width="13"
+                stroke-linecap="round"
+              />
+              <path
+                d="M188 117c-26-4-54-14-74-24"
+                fill="none"
+                stroke="#C99B71"
+                stroke-width="15"
+                stroke-linecap="round"
+              />
+
+              <!-- 108 顆珠子由 mala.ts 生成 -->
+              <g class="mala__ring" id="ring"></g>
+
+              <!-- 拇指：壓在珠串上，每一下往前推一顆 -->
+              <g class="mala__thumb" id="thumb">
+                <path
+                  d="M170 103c-24-8-49-20-63-27"
+                  fill="none"
+                  stroke="#EBC69D"
+                  stroke-width="13"
+                  stroke-linecap="round"
+                />
+              </g>
+            </svg>
+          </button>
+        </div>
+
+        <div class="scene__fx" id="fx" aria-hidden="true"></div>
+
+        <!-- 和尚：滿 108 才走出來 -->
+        <div class="monk" id="monk" aria-hidden="true">
+          <div class="monk__bob" id="bob">
+            <svg class="monk__art" viewBox="0 0 200 230">
+              <defs>
+                <linearGradient id="robe" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#B4703A" />
+                  <stop offset="55%" stop-color="#8E5327" />
+                  <stop offset="100%" stop-color="#5C3315" />
+                </linearGradient>
+                <linearGradient id="sleeve" x1="0" y1="0" x2="0.6" y2="1">
+                  <stop offset="0%" stop-color="#A2622F" />
+                  <stop offset="100%" stop-color="#6B3C18" />
+                </linearGradient>
+                <linearGradient id="skirt" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#96581F" />
+                  <stop offset="100%" stop-color="#43250F" />
+                </linearGradient>
+                <linearGradient id="kasaya" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#E0A94F" />
+                  <stop offset="100%" stop-color="#B47C2C" />
+                </linearGradient>
+                <radialGradient id="scalp" cx="38%" cy="26%" r="76%">
+                  <stop offset="0%" stop-color="#E8C29A" />
+                  <stop offset="70%" stop-color="#D2A374" />
+                  <stop offset="100%" stop-color="#A97B50" />
+                </radialGradient>
+              </defs>
+
+              <ellipse
+                class="monk__shadow"
+                cx="100"
+                cy="206"
+                rx="50"
+                ry="7"
+                fill="#000"
+                opacity=".5"
+              />
+
+              <!-- 上半身：以腰為軸鞠躬 -->
+              <g class="monk__torso">
+                <path
+                  d="M78 150c-4-24-2-45 6-55 8-10 22-14 32-10 10 5 14 19 13 35-1 12-3 22-4 30Z"
+                  fill="url(#robe)"
+                />
+                <path
+                  d="M110 88c14 4 22 16 23 30 1 11-3 20-9 25l-11-4c6-7 8-17 5-27-3-9-8-15-13-18Z"
+                  fill="url(#sleeve)"
+                />
+                <path
+                  d="M84 97c12 11 27 17 44 18l-1 12c-19-1-35-7-47-17Z"
+                  fill="url(#kasaya)"
+                />
+                <path
+                  d="M124 117c0-10 4-19 8-23 4 2 6 12 4 22-1 6-6 9-9 8-2-1-3-4-3-7Z"
+                  fill="#E0B384"
+                />
+                <path
+                  d="M129 95c3 3 4 12 3 20"
+                  fill="none"
+                  stroke="#B98457"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                  opacity=".7"
+                />
+
+                <!-- 頭：多低一點且慢半拍，做二次動作 -->
+                <g class="monk__head">
+                  <path
+                    d="M103 36c16 0 28 12 28 28 0 4 2 6 3 8 1 2-1 4-4 4-2 8-10 15-21 15-16 0-28-12-28-28S87 36 103 36Z"
+                    fill="url(#scalp)"
+                  />
+                  <ellipse cx="92" cy="70" rx="5" ry="7" fill="#C08D5D" />
+                  <path
+                    d="M117 70c2 3 5 3 7 1"
+                    fill="none"
+                    stroke="#6B4526"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    opacity=".75"
+                  />
+                  <path
+                    d="M88 48c6-6 17-8 25-5"
+                    fill="none"
+                    stroke="#F6E1C6"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    opacity=".35"
+                  />
+                </g>
+              </g>
+
+              <!-- 下襬：畫在上半身之後，順便蓋掉旋轉時的接縫 -->
+              <path
+                d="M73 140c-5 22-11 44-17 61 28 9 60 9 88 0-6-17-12-39-17-61-17-6-37-6-54 0Z"
+                fill="url(#skirt)"
+              />
+              <path
+                d="M73 140c17-6 37-6 54 0l1 8c-18-6-38-6-56 0Z"
+                fill="#3B200C"
+                opacity=".85"
+              />
+              <path
+                d="M95 155c-2 18-4 33-6 46"
+                fill="none"
+                stroke="#2E190A"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                opacity=".3"
+              />
+              <path
+                d="M115 156c1 17 3 32 5 44"
+                fill="none"
+                stroke="#2E190A"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                opacity=".22"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <p class="rite" id="rite" aria-hidden="true">圓滿</p>
+      </div>
+
+      <div class="modes" role="group" aria-label="法器">
+        <button class="mode" id="mode-muyu" type="button" aria-pressed="true">
+          木魚
+        </button>
+        <button class="mode" id="mode-mala" type="button" aria-pressed="false">
+          念珠
+        </button>
+      </div>
+
+      <button class="reset" id="reset" type="button">重新開始</button>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

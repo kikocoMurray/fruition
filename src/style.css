@@ -1,0 +1,348 @@
+/* 一個安靜的深色房間。這個 App 只做一件事，所以畫面上不該有第二個焦點。 */
+
+:root {
+  --ground: #0e0d0c;
+  --ink: #e7e1d4;
+  --muted: #6f6a5f;
+  --gold: #d8b26a;
+  --hairline: #241f1a;
+
+  --serif: 'Songti TC', 'Songti SC', 'STSong', 'Times New Roman', serif;
+  --sans: 'PingFang TC', 'PingFang SC', 'Heiti TC', system-ui, -apple-system,
+    sans-serif;
+
+  --muyu-size: min(56vw, 14.5rem);
+  --monk-size: min(38vw, 9.5rem);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* .strike 與 .beads 都設了 display，不加這行 hidden 會被蓋掉 */
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(120% 90% at 50% 34%, #191512 0%, var(--ground) 62%);
+  color: var(--ink);
+  font-family: var(--sans);
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 5vh, 3rem);
+  padding: max(2rem, env(safe-area-inset-top)) 1.5rem
+    max(2rem, env(safe-area-inset-bottom));
+}
+
+/* ---------- 計數 ---------- */
+
+.tally {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tally__count {
+  font-family: var(--serif);
+  font-size: clamp(3.5rem, 16vw, 5.5rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.tally__label {
+  margin: 0;
+  font-size: 0.8125rem;
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  color: var(--muted);
+}
+
+/* ---------- 舞台 ---------- */
+
+.scene {
+  position: relative;
+  width: 100%;
+  max-width: 26rem;
+  display: grid;
+  place-items: center;
+}
+
+/* ---------- 木魚 ---------- */
+
+.strike {
+  position: relative;
+  display: grid;
+  place-items: center;
+  opacity: 1;
+}
+
+.muyu {
+  -webkit-appearance: none;
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  display: block;
+  width: var(--muyu-size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: drop-shadow(0 1.5rem 2.5rem rgb(0 0 0 / 0.55));
+
+  /* 連續敲擊必然觸發 iOS 的 double-tap zoom、長按放大鏡、文字選取藍框。
+     這四行是防護，不是裝飾。 */
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.muyu__art {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.muyu[aria-disabled='true'] {
+  cursor: default;
+}
+
+.muyu:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 0.75rem;
+}
+
+/* ---------- 念珠 ---------- */
+
+.mala {
+  -webkit-appearance: none;
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  display: block;
+  width: min(84vw, 22rem);
+  aspect-ratio: 200 / 130;
+  filter: drop-shadow(0 1.25rem 2rem rgb(0 0 0 / 0.5));
+
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.mala__art {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* 珠環繞著那個落在畫面外的大圓心轉 */
+.mala__ring {
+  transform-box: view-box;
+  transform-origin: 100px 250px;
+}
+
+/* 拇指的根部 */
+.mala__thumb {
+  transform-box: view-box;
+  transform-origin: 170px 103px;
+}
+
+.mala[aria-disabled='true'] {
+  cursor: default;
+}
+
+.mala:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+/* ---------- 敲擊回饋 ---------- */
+
+.scene__fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+
+.ring {
+  position: absolute;
+  width: var(--muyu-size);
+  aspect-ratio: 1;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.rise {
+  position: absolute;
+  bottom: 62%;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  white-space: nowrap;
+  opacity: 0;
+}
+
+/* ---------- 和尚：滿 108 才登場 ---------- */
+
+.monk {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: end center;
+  padding-bottom: 4%;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.monk__bob {
+  width: var(--monk-size);
+  aspect-ratio: 200 / 230;
+  filter: drop-shadow(0 1rem 1.75rem rgb(0 0 0 / 0.5));
+}
+
+.monk__art {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* 鞠躬的兩個支點：腰、頸 */
+.monk__torso {
+  transform-box: view-box;
+  transform-origin: 100px 144px;
+}
+
+.monk__head {
+  transform-box: view-box;
+  transform-origin: 103px 88px;
+}
+
+.monk__shadow {
+  transform-box: view-box;
+  transform-origin: 100px 206px;
+}
+
+.rite {
+  position: absolute;
+  top: 4%;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 5vw, 1.625rem);
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: var(--gold);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- 法器切換 ---------- */
+
+.modes {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+}
+
+.mode {
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.4375rem 1.125rem;
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: 0.9375rem;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mode:hover {
+  color: var(--ink);
+}
+
+.mode[aria-pressed='true'] {
+  color: var(--gold);
+  background: #1e1a15;
+}
+
+.mode:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ---------- 重新開始 ---------- */
+
+.reset {
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding: 0.5rem 1.125rem;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.reset:hover,
+.reset:focus-visible {
+  color: var(--ink);
+  border-color: var(--muted);
+}
+
+.reset:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring,
+  .rise {
+    display: none;
+  }
+}
