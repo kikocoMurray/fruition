@@ -26,11 +26,11 @@ jobs:
           node-version: 22
           cache: npm
 
-      # enablement: true 會在 Pages 還沒開啟時直接用 API 打開，
-      # 省掉去 repo Settings 手動點一次的步驟。
+      # 不用 enablement: true——那會叫 GITHUB_TOKEN 去打 Pages 的建立 API，
+      # 而那個 API 要的權限比 workflow token 拿得到的高，只會換來
+      # 「Resource not accessible by integration」。Pages 在 repo Settings
+      # 開一次就好，這一步之後只負責讀設定。
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - run: npm ci
       - run: npm run build
